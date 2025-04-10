@@ -7,25 +7,25 @@
             </span>
             <span v-else>
                 <button @click="onCancelOperate" style="margin-right: 6px;">取消</button>
-                <button @click="onConfirmOperate" type="primary">{{ `确认${ status==='ADD' ? '添加' : '删除' }` }}</button>
+                <button @click="onConfirmOperate" type="primary">{{ `确认${ status==="ADD" ? "添加" : "删除" }` }}</button>
             </span>
         </div>
         <TreeGraph style="height: 100%;" :template="treeTemplate" :actualData="incompleteData" ref="treeGraphRef" />
     </div>
 </template>
 <script>
-import treeTemplate from "./mock/template.json"
-import incompleteData from "./mock/complete_need_level_1_3.json"
-import TreeGraph from "./components/TreeGraph.vue";
+import treeTemplate from "@/mock/template.json";
+import incompleteData from "@/mock/complete_need_level_1_3.json";
+import TreeGraph from "@/components/TreeGraph";
 export default {
     components: {
-        TreeGraph
+        TreeGraph,
     },
     data(){
         return {
             treeTemplate,
             incompleteData,
-            status: 'READ'
+            status: "READ",
         }
     },
     mounted(){
@@ -33,21 +33,21 @@ export default {
     },
     methods: {
         read(){
-            this.status = 'READ';
+            this.status = "READ";
             this.$nextTick(()=>{
-                this.$refs.treeGraphRef.initData('READ');
+                this.$refs.treeGraphRef.initData("READ");
             })
         },
         onAdd(){
-            this.status = 'ADD';
+            this.status = "ADD";
             this.$nextTick(()=>{
-                this.$refs.treeGraphRef.initData('ADD');
+                this.$refs.treeGraphRef.initData("ADD");
             })
         },
         onDelete(){
-            this.status = 'DELETE';
+            this.status = "DELETE";
             this.$nextTick(()=>{
-                this.$refs.treeGraphRef.initData('DELETE');
+                this.$refs.treeGraphRef.initData("DELETE");
             })
         },
         onCancelOperate(){

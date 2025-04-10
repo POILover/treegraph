@@ -7,10 +7,10 @@
                 {{ searchStates.currentIndex }}/{{ searchStates.matchList.length }}
             </span>
             <span style="margin-left: 6px;cursor: pointer;" @click="onSearchPrev">
-                <img src="../utils/arrow.png" style="transform: rotate(90deg);" width="14px" height="14px" alt="previous">
+                <img src="./utils/arrow.png" style="transform: rotate(90deg);" width="14px" height="14px" alt="previous">
             </span>
             <span style="margin-left: 6px;cursor: pointer;" @click="onSearchNext">
-                <img src="../utils/arrow.png" style="transform: rotate(-90deg);" width="14px" height="14px" alt="next">
+                <img src="./utils/arrow.png" style="transform: rotate(-90deg);" width="14px" height="14px" alt="next">
             </span>
         </span>
         <div id="container" style="height:calc(100% - 60px);"></div>
@@ -18,15 +18,14 @@
 </template>
 <script>
 import G6 from "@antv/g6";
-import FuzzySelect from "./FuzzySelect.vue";
+import FuzzySelect from "@/components/FuzzySelect";
 import { 
-    nodes, ANTV_TREE_COLLAPSED_FLAG, NODE_TYPE,
-    expandNode, collapseNode, expandNodeAll, getNextGreen, getNextRed,
-    deepCopyTree, mergePartDataToTemplate, findNodesWithParents,
-} from "../utils/index.js";
-import incompletePartData from "../mock/level_1_3_need_level_1_3_2.json"
-import partPartData from "../mock/level_1_3_2.json"
-G6.registerNode("tree-default-node",nodes["tree-default-node"],'rect');
+    nodes, ANTV_TREE_COLLAPSED_FLAG, NODE_TYPE, expandNode, collapseNode, expandNodeAll, getNextGreen, getNextRed, mergePartDataToTemplate
+} from "./utils";
+import { deepCopyTree, findNodesWithParents } from "@/utils";
+import incompletePartData from "@/mock/level_1_3_need_level_1_3_2.json";
+import partPartData from "@/mock/level_1_3_2.json";
+G6.registerNode("tree-default-node", nodes["tree-default-node"], "rect");
 export default {
     name: "TreeGraph",
     components: {
@@ -35,11 +34,11 @@ export default {
     props: {
         template: {
             type: Object,
-            default: null
+            default: () => ({})
         },
         actualData: {
             type: Object,
-            default: null
+            default: () => ({})
         },
     },
     data(){
@@ -50,7 +49,7 @@ export default {
             actualTreeData: null,
             incompletePartData: deepCopyTree(incompletePartData),
             partPartData: deepCopyTree(partPartData),
-            status: 'READ',
+            status: "READ",
             invCode: null,
             currentLevelNameList: [],
             searchStates: {
@@ -60,18 +59,18 @@ export default {
         }
     },
     methods: {
-        initData(status='READ'){
+        initData(status="READ"){
             this.status = status;
             this.treeTemplate = this.handleTreeData(this.template, { operation: "DEFAULT", nodeType: NODE_TYPE.GHOST_NODE, generateId: true });
             this.actualTreeData = deepCopyTree(this.actualData);
             switch(this.status){
-                case 'ADD':
+                case "ADD":
                     this.onAdd();
                     break;
-                case 'DELETE':
+                case "DELETE":
                     this.onDelete();
                     break;
-                case 'READ':
+                case "READ":
                     this.onRead();
                     break;
             }
@@ -109,7 +108,7 @@ export default {
         // 统一的数据处理函数
         handleTreeData(data, options = {}) {
             const {
-                operation = 'DEFAULT', // 'DEFAULT', 'ADD', 'DELETE', 'CANCEL_DELETE', 'CANCEL_ADD'
+                operation = "DEFAULT", // "DEFAULT", "ADD", "DELETE", "CANCEL_DELETE", "CANCEL_ADD"
                 nodeType,
                 collapsed = false,
                 generateId = false,
@@ -120,11 +119,11 @@ export default {
             const handleFunc = (item, parent = null) => {
                 // 根据不同操作类型进行处理
                 switch (operation) {
-                    case 'DEFAULT':
-                        generateId && (item.id = 'nodeid' + count++);
+                    case "DEFAULT":
+                        generateId && (item.id = "nodeid" + count++);
                         item.nodeType = nodeType;
                         break;
-                    case 'ADD':
+                    case "ADD":
                         /* 
                             组装
                             预处理目标数据，标记nodeType，并设置head
@@ -133,7 +132,7 @@ export default {
                         item.nodeType = NODE_TYPE.ADD_NODE;
                         item.ADD_NODE_COLOR = color;
                         break;
-                    case 'DELETE':
+                    case "DELETE":
                         /* 
                             拆卸
                             忽略GHOST_NODE和isDeleteHead为true的节点
@@ -156,7 +155,7 @@ export default {
                                 return item;
                         }
                         break;
-                    case 'CANCEL_DELETE':
+                    case "CANCEL_DELETE":
                         /* 
                             取消拆卸
                             如果是GHOST_NODE或isDeleteHead为true的节点，直接返回
@@ -253,7 +252,7 @@ export default {
                             */
                             const graphParentNode = this.graph.findDataById(templateParentNode.id);
                             delete model.isDeleteHead;
-                            const cancelDeleteData = this.handleTreeData(model, { operation: 'CANCEL_DELETE', parentNode: graphParentNode });
+                            const cancelDeleteData = this.handleTreeData(model, { operation: "CANCEL_DELETE", parentNode: graphParentNode });
                             this.graph.updateChild(cancelDeleteData, templateParentNode.id);
                             this.rerenderGraph();
                             break;
@@ -268,7 +267,7 @@ export default {
                             break;
                     }
                 },
-                itemTypes: ['node'],
+                itemTypes: ["node"],
                 shouldBegin: (e) => {
                     // 将显示的内容计算逻辑放在这里, 存到e._contextMenuContent中, 否则getContent可能要重复这个逻辑
                     // 核心原因是getContent不能返回null或undefined, 而且就算返回空串也会显示一个空的contextmenu
@@ -283,7 +282,7 @@ export default {
                             return !child[ANTV_TREE_COLLAPSED_FLAG] && checkAllExpanded(child);
                         });
                     };
-                    const isHeadNode = model.id === 'nodeid0'
+                    const isHeadNode = model.id === "nodeid0"
                     const allExpandDiv = `<div class="menu-item" name="ALL_EXPAND">全部展开</div>`;
                     const expandDiv = `<div class="menu-item" name="EXPAND">展开</div>`;
                     const collapseDiv = `<div class="menu-item" name="COLLAPSE">折叠</div>`;
@@ -299,12 +298,12 @@ export default {
                         }
                     }
                     if(!isHeadNode){
-                        if(this.status === 'ADD'){
+                        if(this.status === "ADD"){
                             if(model.isAddHead){
                                 content += cancelAddDiv;
                             }
                         }
-                        if(this.status === 'DELETE'){
+                        if(this.status === "DELETE"){
                             if(model.nodeType === NODE_TYPE.DELETE_NODE){
                                 if(model.isDeleteHead){
                                     content += cancelDeleteDiv;
@@ -334,9 +333,9 @@ export default {
                     type: "tree-default-node",
                 },
                 defaultEdge: {
-                    type: 'cubic-horizontal',
+                    type: "cubic-horizontal",
                     style: {
-                        stroke: '#CED4D9',
+                        stroke: "#CED4D9",
                     },
                 },
                 layout: {
@@ -376,7 +375,7 @@ export default {
                     合并该节点和对应完整的基础模板数据，并设置残缺部分的HEAD标记
                 */
                 const [{node: templateCurrentNode, parent: templateParentNode}] = findNodesWithParents(this.treeTemplate, data => data.id === model.id);
-                const partData = this.handleTreeData(model.name === 'level_1_3' ? this.incompletePartData : this.partPartData, { operation: 'ADD', color: getNextGreen() });
+                const partData = this.handleTreeData(model.name === "level_1_3" ? this.incompletePartData : this.partPartData, { operation: "ADD", color: getNextGreen() });
                 partData.isAddHead = true;
                 // 预处理sort字段
                 partData.sort = templateCurrentNode.sort;
@@ -396,7 +395,7 @@ export default {
                 const deltaY = e.deltaY;
                 this.graph.translate(-deltaX, -deltaY);
             });
-            this.graph.on('afterrender', () => {
+            this.graph.on("afterrender", () => {
                 // 保持视图位置
                 this.matrix && this.graph.getGroup().setMatrix(this.matrix);
                 this.matrix = null;
@@ -449,7 +448,7 @@ export default {
             const allNodes = this.graph.getNodes();
             const filterNods = allNodes.filter(node=>node.getModel().name === searchNodeName);
             allNodes.forEach(node=>{
-                this.graph.setItemState(node, 'highlight', '');
+                this.graph.setItemState(node, "highlight", "");
             })
             if(!filterNods.length || !searchNodeName){
                 this.searchStates.matchList = [];
@@ -459,14 +458,14 @@ export default {
             this.searchStates.currentIndex = 1;
             const targetNode = filterNods[0];
             this.graph.focusItem(targetNode, true, {
-                easing: 'easeCubic',
+                easing: "easeCubic",
                 duration: 500,
             });
             this.searchStates.matchList.forEach(node=>{
                 if(node===targetNode){
-                    this.graph.setItemState(node, 'highlight', 'focus');
+                    this.graph.setItemState(node, "highlight", "focus");
                 }else{
-                    this.graph.setItemState(node, 'highlight', 'normal');
+                    this.graph.setItemState(node, "highlight", "normal");
                 }
             })
             
@@ -479,14 +478,14 @@ export default {
             }
             const targetNode = this.searchStates.matchList[this.searchStates.currentIndex - 1];
             this.graph.focusItem(targetNode, true, {
-                easing: 'easeCubic',
+                easing: "easeCubic",
                 duration: 500,
             });
             this.searchStates.matchList.forEach(node=>{
                 if(node===targetNode){
-                    this.graph.setItemState(node, 'highlight', 'focus');
+                    this.graph.setItemState(node, "highlight", "focus");
                 }else{
-                    this.graph.setItemState(node, 'highlight', 'normal');
+                    this.graph.setItemState(node, "highlight", "normal");
                 }
             })
         },
@@ -498,15 +497,15 @@ export default {
             }
             const targetNode = this.searchStates.matchList[this.searchStates.currentIndex - 1];
             this.graph.focusItem(targetNode, true, {
-                easing: 'easeCubic',
+                easing: "easeCubic",
                 duration: 500,
             });
             
             this.searchStates.matchList.forEach(node=>{
                 if(node===targetNode){
-                    this.graph.setItemState(node, 'highlight', 'focus');
+                    this.graph.setItemState(node, "highlight", "focus");
                 }else{
-                    this.graph.setItemState(node, 'highlight', 'normal');
+                    this.graph.setItemState(node, "highlight", "normal");
                 }
             })
         },
@@ -514,12 +513,6 @@ export default {
 }
 </script>
 <style>
-  .g6-minimap {
-    position: absolute;
-    right: 100px;
-    top: 100px;
-    background-color: #fff;
-  }
   .g6-component-contextmenu {
     border: 1px solid #ddd;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
