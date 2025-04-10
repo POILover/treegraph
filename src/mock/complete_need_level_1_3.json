@@ -1,0 +1,38 @@
+{
+  "name": "level_0",
+  "content": "content_0",
+  "children": [
+    {
+      "name": "level_1_1",
+      "content": "content_1_1",
+      "sort": 1,
+      "children": [
+        {
+          "name": "level_1_1_1",
+          "content": "content_1_1_1",
+          "sort": 1,
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "level_1_2",
+      "content": "content_1_2",
+      "sort": 2,
+      "children": [
+        {
+          "name": "level_1_2_1_dup",
+          "content": "content_1_2_1",
+          "sort": 1,
+          "children": []
+        },
+        {
+          "name": "level_1_2_1_dup",
+          "content": "content_1_2_2",
+          "sort": 2,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

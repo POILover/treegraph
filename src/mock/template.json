@@ -1,0 +1,84 @@
+{
+    "name": "level_0",
+    "content": null,
+    "children": [
+      {
+        "name": "level_1_1",
+        "content": null,
+        "sort": 1,
+        "children": [
+          {
+            "name": "level_1_1_1",
+            "content": null,
+            "sort": 1,
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "level_1_2",
+        "content": null,
+        "sort": 2,
+        "children": [
+          {
+            "name": "level_1_2_1_dup",
+            "content": null,
+            "sort": 1,
+            "children": []
+          },
+          {
+            "name": "level_1_2_1_dup",
+            "content": null,
+            "sort": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "level_1_3",
+        "content": null,
+        "sort": 3,
+        "children": [
+          {
+            "name": "level_1_3_1",
+            "content": null,
+            "sort": 1,
+            "children": [
+              {
+                "name": "level_1_3_1_1",
+                "content": null,
+                "sort": 1,
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "level_1_3_2",
+            "content": null,
+            "sort": 2,
+            "children": [
+              {
+                "name": "level_1_3_2_1",
+                "content": null,
+                "sort": 1,
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "level_1_3_3",
+            "content": null,
+            "sort": 3,
+            "children": [
+              {
+                "name": "level_1_3_3_1",
+                "content": null,
+                "sort": 1,
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
