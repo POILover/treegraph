@@ -44,22 +44,21 @@ export default {
     data(){
         return {
             graph: null,
-            matrix: null, // 如果有值，则保持视图位置
-            treeTemplate: null,
-            actualTreeData: null,
+            matrix: null, // 如果有值, 则保持视图位置
+            treeTemplate: null, // 原始模板树结构处理后的数据
+            actualTreeData: null, // 原始实际数据处理后的数据
             incompletePartData: deepCopyTree(incompletePartData),
             partPartData: deepCopyTree(partPartData),
             status: "READ",
-            invCode: null,
-            currentLevelNameList: [],
+            currentLevelNameList: [], // 折叠展开会影响当前显示的节点数量, 这里是当前显示的节点的去重后的name列表
             searchStates: {
-                matchList: [], // 选中节点列表
-                currentIndex: 0, // 当前选中节点索引
+                matchList: [], // 命中的节点列表, 需要设置高亮
+                currentIndex: 0, // 当前需要focus的节点索引 + 1
             }
         }
     },
     methods: {
-        initData(status="READ"){
+        initData(status = "READ"){
             this.status = status;
             this.treeTemplate = this.handleTreeData(this.template, { operation: "DEFAULT", nodeType: NODE_TYPE.GHOST_NODE, generateId: true });
             this.actualTreeData = deepCopyTree(this.actualData);
@@ -76,9 +75,9 @@ export default {
             }
         },
         onRead(){
-            // 处理目标数据，标记nodeType
+            // 处理目标数据, 标记nodeType
             this.actualTreeData = this.handleTreeData(this.actualTreeData, { operation: "DEFAULT", nodeType: NODE_TYPE.DEFAULT_NODE });
-            // 无论是读、拆、装，都要显示可能没有的节点
+            // 无论是读、删、增, 都选择显示模板上所有的节点
             this.originGraphData = mergePartDataToTemplate(this.treeTemplate, this.actualTreeData, false);
             this.graphData = deepCopyTree(this.originGraphData);
             this.$nextTick(()=>{
@@ -86,9 +85,9 @@ export default {
             })
         },
         onAdd(){
-            // 处理目标数据，标记nodeType，并设置head
+            // 处理目标数据, 标记nodeType, 并设置head
             this.actualTreeData = this.handleTreeData(this.actualTreeData, { operation: "DEFAULT", nodeType: NODE_TYPE.DEFAULT_NODE });
-            // 只有组装时会有isGhostHead标记
+            // 只有ADD状态才会有isGhostHead标记
             this.originGraphData = mergePartDataToTemplate(this.treeTemplate, this.actualTreeData, true);
             this.graphData = deepCopyTree(this.originGraphData);
             this.$nextTick(()=>{
@@ -96,9 +95,9 @@ export default {
             })
         },
         onDelete(){
-            // 处理目标数据，标记nodeType
+            // 处理目标数据, 标记nodeType
             this.actualTreeData = this.handleTreeData(this.actualTreeData, { operation: "DEFAULT", nodeType: NODE_TYPE.DEFAULT_NODE });
-            // 无论是读、拆、装，都要显示可能没有的节点
+            // 无论是读、删、增, 都选择显示模板上所有的节点
             this.originGraphData = mergePartDataToTemplate(this.treeTemplate, this.actualTreeData, false);
             this.graphData = deepCopyTree(this.originGraphData);
             this.$nextTick(()=>{
@@ -108,36 +107,36 @@ export default {
         // 统一的数据处理函数
         handleTreeData(data, options = {}) {
             const {
-                operation = "DEFAULT", // "DEFAULT", "ADD", "DELETE", "CANCEL_DELETE", "CANCEL_ADD"
+                operation = "DEFAULT", // "DEFAULT", "ADD", "DELETE", "CANCEL_ADD", "CANCEL_DELETE"
                 nodeType,
                 collapsed = false,
                 generateId = false,
                 color = null,
-                parentNode = null, // 父节点类型，用于某些操作
+                parentNode = null,
             } = options;
             let count = 0;
             const handleFunc = (item, parent = null) => {
-                // 根据不同操作类型进行处理
                 switch (operation) {
                     case "DEFAULT":
+                        // 用来给模板生成id
                         generateId && (item.id = "nodeid" + count++);
                         item.nodeType = nodeType;
                         break;
                     case "ADD":
                         /* 
-                            组装
-                            预处理目标数据，标记nodeType，并设置head
-                            合并该节点和对应完整的基础模板数据，并设置残缺部分的HEAD标记
+                            ADD状态
+                            预处理目标数据, 标记nodeType, 并设置head
+                            合并该节点和对应完整的基础模板数据, 并设置残缺部分的HEAD标记
                         */
                         item.nodeType = NODE_TYPE.ADD_NODE;
                         item.ADD_NODE_COLOR = color;
                         break;
                     case "DELETE":
                         /* 
-                            拆卸
+                            DELETE状态
                             忽略GHOST_NODE和isDeleteHead为true的节点
-                            该节点及其子节点中所有nodeType为DEFAULT_NODE的节点置为DELETE_NODE
-                            添加DELETE_NODE_COLOR字段，值为getNextRed()
+                            将该节点及其子节点中所有nodeType为DEFAULT_NODE的节点置为DELETE_NODE
+                            添加DELETE_NODE_COLOR字段, 值为getNextRed()
                             将该节点的isDeleteHead置为true
                         */
                         if (item.isDeleteHead) {
@@ -157,11 +156,11 @@ export default {
                         break;
                     case "CANCEL_DELETE":
                         /* 
-                            取消拆卸
+                            取消DELETE
                             如果是GHOST_NODE或isDeleteHead为true的节点，直接返回
-                            如果是DELETE_NODE，查看父节点是否是DELETE_NODE
-                                是，颜色保持和父节点一致
-                                否，将节点类型置为DEFAULT_NODE，并删除DELETE_NODE_COLOR
+                            如果是DELETE_NODE, 查看父节点是否是DELETE_NODE
+                                是, 颜色保持和父节点一致
+                                否, 将节点类型置为DEFAULT_NODE, 并删除DELETE_NODE_COLOR
                         */
                         switch (item.nodeType) {
                             case NODE_TYPE.DELETE_NODE:
@@ -180,7 +179,6 @@ export default {
                         }
                         break;
                 }
-                // 这个逻辑会保持组装拆卸中GHOST_NODE的折叠状态
                 item[ANTV_TREE_COLLAPSED_FLAG] = collapsed;
                 if (item.children) {
                     item.children.forEach((child) => {
@@ -230,10 +228,10 @@ export default {
                             break;
                         case "DELETE":
                             /* 
-                                拆卸
+                                DELETE状态
                                 忽略GHOST_NODE和isDeleteHead为true的节点
                                 该节点及其子节点中所有nodeType为DEFAULT_NODE的节点置为DELETE_NODE
-                                添加DELETE_NODE_COLOR字段，值为getNextRed()
+                                添加DELETE_NODE_COLOR字段, 值为getNextRed()
                                 将该节点的isDeleteHead置为true
                             */
                             const deleteData = this.handleTreeData(model, { operation: 'DELETE', color: getNextRed() });
@@ -243,12 +241,12 @@ export default {
                             break;
                         case "CANCEL_DELETE":
                             /* 
-                                取消拆卸
+                                取消DELETE
                                 先删除目标节点isDeleteHead标记
-                                如果是GHOST_NODE或isDeleteHead为true的节点，直接返回
-                                如果是DELETE_NODE，查看父节点是否是DELETE_NODE
-                                    是，颜色保持和父节点一致
-                                    否，将节点类型置为DEFAULT_NODE，并删除DELETE_NODE_COLOR
+                                如果是GHOST_NODE或isDeleteHead为true的节点, 直接返回
+                                如果是DELETE_NODE, 查看父节点是否是DELETE_NODE
+                                    是, 颜色保持和父节点一致
+                                    否, 将节点类型置为DEFAULT_NODE, 并删除DELETE_NODE_COLOR
                             */
                             const graphParentNode = this.graph.findDataById(templateParentNode.id);
                             delete model.isDeleteHead;
@@ -257,7 +255,7 @@ export default {
                             this.rerenderGraph();
                             break;
                         case "CANCEL_ADD":
-                            // 取消组装 - 这个逻辑反倒异常简单，原因是组装在真实业务中不能出现断点
+                            // 取消ADD - 这个逻辑反倒异常简单, 原因是添加内容在真实业务中不可能出现断点
                             // 将该节点及其子节点全部置为模板节点的GHOST
                             // 将该节点的isAddHead置为true
                             const ghostData = deepCopyTree(templateCurrentNode);
@@ -282,13 +280,13 @@ export default {
                             return !child[ANTV_TREE_COLLAPSED_FLAG] && checkAllExpanded(child);
                         });
                     };
-                    const isHeadNode = model.id === "nodeid0"
+                    const isHeadNode = model.id === "nodeid0"; // TODO: 魔法字符串
                     const allExpandDiv = `<div class="menu-item" name="ALL_EXPAND">全部展开</div>`;
                     const expandDiv = `<div class="menu-item" name="EXPAND">展开</div>`;
                     const collapseDiv = `<div class="menu-item" name="COLLAPSE">折叠</div>`;
                     const deleteDiv = `<div class="menu-item" name="DELETE">删除节点</div>`;
                     const cancelDeleteDiv = `<div class="menu-item" name="CANCEL_DELETE">取消删除</div>`;
-                    const cancelAddDiv = `<div class="menu-item" name="CANCEL_ADD">取消增加</div>`;
+                    const cancelAddDiv = `<div class="menu-item" name="CANCEL_ADD">取消添加</div>`;
                     let content = "";
                     if (hasChildren) {
                         if (isCollapsed) {
@@ -297,6 +295,7 @@ export default {
                             content = collapseDiv;
                         }
                     }
+                    // 根节点不能进行相关操作
                     if(!isHeadNode){
                         if(this.status === "ADD"){
                             if(model.isAddHead){
@@ -366,20 +365,21 @@ export default {
             };
             this.graph.on("collapse-text:click", handleCollapse);
             this.graph.on("collapse-rect:click", handleCollapse);
-            this.graph.on("add_text:click", (e)=>{
+            this.graph.on("add_text:click", (e) => {
                 const item = e.item;
                 const model = item.getModel();
                 /* 
-                    组装
+                    ADD
                     预处理目标数据，标记nodeType，并设置head
                     合并该节点和对应完整的基础模板数据，并设置残缺部分的HEAD标记
                 */
                 const [{node: templateCurrentNode, parent: templateParentNode}] = findNodesWithParents(this.treeTemplate, data => data.id === model.id);
+                // 演示用例
                 const partData = this.handleTreeData(model.name === "level_1_3" ? this.incompletePartData : this.partPartData, { operation: "ADD", color: getNextGreen() });
                 partData.isAddHead = true;
                 // 预处理sort字段
                 partData.sort = templateCurrentNode.sort;
-                // 这里取巧了，直接合并了图数据，正常逻辑应该是合并模板数据后覆盖图数据
+                // 这里取巧了, 直接合并了图数据, 正常逻辑应该是合并模板数据后覆盖图数据
                 const mergeNode = mergePartDataToTemplate(model, partData, true);
                 this.graph.updateChild(mergeNode, templateParentNode.id);
                 this.rerenderGraph();
@@ -401,7 +401,7 @@ export default {
                 this.matrix = null;
             })
             
-            // 以保证第一个节点高度为40为标准, 设置整个画布的初始zoom
+            // 以保证第一个节点高度为80为标准, 设置整个画布的初始zoom
             const firstNode = this.graph.getNodes()[0];
             if (firstNode) {
                 const bbox = firstNode.getBBox();
@@ -434,7 +434,7 @@ export default {
             
         },
         rerenderGraph(){
-            // TODO: 这里是hack，这个逻辑本不应该有
+            // TODO: 这里是hack, 这个逻辑本不应该有
             this.matrix = this.graph.getGroup().getMatrix();
             this.graph.changeData(this.graph.save());
         },
@@ -457,17 +457,7 @@ export default {
             this.searchStates.matchList = filterNods;
             this.searchStates.currentIndex = 1;
             const targetNode = filterNods[0];
-            this.graph.focusItem(targetNode, true, {
-                easing: "easeCubic",
-                duration: 500,
-            });
-            this.searchStates.matchList.forEach(node=>{
-                if(node===targetNode){
-                    this.graph.setItemState(node, "highlight", "focus");
-                }else{
-                    this.graph.setItemState(node, "highlight", "normal");
-                }
-            })
+            this.focusTargetNode(targetNode);
             
         },
         onSearchNext(){
@@ -477,17 +467,7 @@ export default {
                 this.searchStates.currentIndex++;
             }
             const targetNode = this.searchStates.matchList[this.searchStates.currentIndex - 1];
-            this.graph.focusItem(targetNode, true, {
-                easing: "easeCubic",
-                duration: 500,
-            });
-            this.searchStates.matchList.forEach(node=>{
-                if(node===targetNode){
-                    this.graph.setItemState(node, "highlight", "focus");
-                }else{
-                    this.graph.setItemState(node, "highlight", "normal");
-                }
-            })
+            this.focusTargetNode(targetNode);
         },
         onSearchPrev(){
             if(this.searchStates.currentIndex <= 1){
@@ -496,6 +476,9 @@ export default {
                 this.searchStates.currentIndex--;
             }
             const targetNode = this.searchStates.matchList[this.searchStates.currentIndex - 1];
+            this.focusTargetNode(targetNode);
+        },
+        focusTargetNode(targetNode){
             this.graph.focusItem(targetNode, true, {
                 easing: "easeCubic",
                 duration: 500,
@@ -508,7 +491,7 @@ export default {
                     this.graph.setItemState(node, "highlight", "normal");
                 }
             })
-        },
+        }
     }
 }
 </script>
