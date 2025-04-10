@@ -1,17 +1,20 @@
 <template>
-    <FuzzySelect style="display: inline-block;" :options="currentLevelNameList" @change="onSearchChange" />
-    <span v-if="searchStates.matchList.length > 0" style="margin-left: 20px;">
-        <span>
-            {{ searchStates.currentIndex }}/{{ searchStates.matchList.length }}
+    <div style="padding: 10px;box-sizing: border-box;">
+        <!-- 复现浏览器ctrl + F -->
+        <FuzzySelect :options="currentLevelNameList" @change="onSearchChange" />
+        <span v-if="searchStates.matchList.length > 0" style="margin-left: 6px;">
+            <span>
+                {{ searchStates.currentIndex }}/{{ searchStates.matchList.length }}
+            </span>
+            <span style="margin-left: 6px;cursor: pointer;" @click="onSearchPrev">
+                <img src="../utils/arrow.png" style="transform: rotate(90deg);" width="14px" height="14px" alt="previous">
+            </span>
+            <span style="margin-left: 6px;cursor: pointer;" @click="onSearchNext">
+                <img src="../utils/arrow.png" style="transform: rotate(-90deg);" width="14px" height="14px" alt="next">
+            </span>
         </span>
-        <span style="margin-left: 4px;cursor: pointer;" @click="onSearchPrev">
-            <img src="../utils/arrow.png" style="transform: rotate(90deg);" width="14px" height="14px" alt="previous">
-        </span>
-        <span style="margin-left: 4px;cursor: pointer;" @click="onSearchNext">
-            <img src="../utils/arrow.png" style="transform: rotate(-90deg);" width="14px" height="14px" alt="next">
-        </span>
-    </span>
-    <div id="container" style="height:100%;overflow: hidden;"></div>
+        <div id="container" style="height:calc(100% - 60px);"></div>
+    </div>
 </template>
 <script>
 import G6 from "@antv/g6";
@@ -192,7 +195,7 @@ export default {
         initContainer() {
             this.container = document.getElementById("container");
             this.width = this.container.scrollWidth;
-            this.height = this.container.scrollHeight || 800;
+            this.height = this.container.scrollHeight || 600;
         },
   
         initGraph(data) {
@@ -407,7 +410,7 @@ export default {
                 this.graph.zoom(80 / height);
             }
             // 因为没有配置fitView, 这里手动平移一下, 否则默认的左上角是应该是第一个节点的中心
-            this.graph.translate(120, 40);
+            this.graph.translate(135, 50);
         },
         drawChart() {
             if (!this.container) {

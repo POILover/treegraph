@@ -1,11 +1,11 @@
-<!-- 模糊查询组件 -->
+<!-- 简单的模糊查询组件, 有可预见的bug - 输入后只能选择, 不直接作用 -->
 <template>
   <div class="fuzzy-select">
     <input
       type="text"
       v-model="searchQuery"
       @input="onInput"
-      placeholder="请输入查询内容"
+      placeholder="请填写要定位的level"
       @blur="onBlur"
       @click="onClick"
     />
@@ -77,9 +77,12 @@ export default {
 </script>
 <style scoped>
 .fuzzy-select {
+  display: inline-block;
   position: relative;
+  width: 200px;
 }
 .fuzzy-select input {
+  box-sizing: border-box;
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
@@ -87,6 +90,9 @@ export default {
 }
 .fuzzy-select ul {
   position: absolute;
+  list-style: none;
+  padding: 0;
+  margin: 0;
   top: 100%;
   left: 0;
   right: 0;

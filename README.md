@@ -1,18 +1,18 @@
-# Vite Vue Starter
+# G6 Template Tree Editor
 
-This is a project template using [Vite](https://vitejs.dev/). It requires [Node.js](https://nodejs.org) version 18+ or 20+.
+基于 [AntV G6](https://github.com/antvis/G6) 的树图编辑功能的实现，用于在一个结构已知且节点 ID 固定的树图模板中动态增删内容节点。
 
-To start:
+适用于结构模板固定、但需要内容更新的场景，例如 BOM（物料清单）等。通过对模板树结构的轻量封装，支持在不破坏原始结构的前提下进行增删节点操作，并可与外部数据同步。
 
-```sh
-npm install
-npm run dev
+## ✨ 特性
 
-# if using yarn:
-yarn
-yarn dev
+- 🌳 支持基于模板树进行节点添加与删除
+- 🧩 所有节点 ID 固定，增删操作不改变整体结构框架
+- 🎯 适用于 BOM 等需要“结构恒定，内容变化”的业务场景
+- 🛠️ 基于 G6 4.x，自定义节点与交互行为
 
-# if using pnpm:
-pnpm install
-pnpm run dev
-```
+## 📦 示例预览
+
+> ![示意图](docs/assets/sample-tree.png)
+
+## 🚀 快速开始

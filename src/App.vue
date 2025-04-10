@@ -1,12 +1,12 @@
 <template>
     <div style="position: relative;height: 100%;">
-        <div style="position: absolute;top: 0;right:0px">
-                <span v-if="status === 'READ'">
-                <button @click="onAdd" type="primary">添加</button>
+        <div style="position: absolute;top: 10px;right: 10px">
+            <span v-if="status === 'READ'">
+                <button @click="onAdd" type="primary" style="margin-right: 6px;">添加</button>
                 <button @click="onDelete" type="primary">删除</button>
-                </span>
+            </span>
             <span v-else>
-                <button @click="onCancelOperate">取消</button>
+                <button @click="onCancelOperate" style="margin-right: 6px;">取消</button>
                 <button @click="onConfirmOperate" type="primary">{{ `确认${ status==='ADD' ? '添加' : '删除' }` }}</button>
             </span>
         </div>

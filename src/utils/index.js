@@ -1,4 +1,4 @@
-import headIcon from "./icon.png"
+import headIcon from "./icon.png" // svg要比png渲染慢的多
 export const ANTV_TREE_COLLAPSED_FLAG = "collapsed"
 
 const BOX_WIDTH = 240;
@@ -196,7 +196,7 @@ export const nodes = {
                 group.addShape("text", {
                     attrs: {
                         x: mainRectDefaultStyle.width / 2,
-                        y: -1,
+                        y: -3,
                         text: cfg[ANTV_TREE_COLLAPSED_FLAG] ? "+" : "-",
                         ...collapseRectDefaultTextStyle,
                         ...collapseRectCustomTextStyle,
