@@ -15,5 +15,5 @@
 ![节点展开/折叠](docs/assets/expand.gif "节点展开/折叠")
 
 ## 🚀 快速开始
-npm install
-npm run dev
+- npm install
+- npm run dev
