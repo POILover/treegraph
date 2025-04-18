@@ -9,22 +9,21 @@
 - 🛠️ 基于模板树进行内容节点/树的添加与删除
 <figure style="text-align: center;">
   <img src="docs/assets/add.gif" alt="节点添加" style="max-width: 100%;" />
-  <figcaption style="font-size: 14px; color: #555;margin-top: 10px;">节点添加</figcaption>
+  <div style="font-size: 14px; color: #555;margin-top: 10px;">节点添加</div>
 </figure>
 <figure style="text-align: center;">
   <img src="docs/assets/add.gif" alt="节点删除" style="max-width: 100%;" />
-  <figcaption style="font-size: 14px; color: #555;margin-top: 10px;">节点删除</figcaption>
+  <div style="font-size: 14px; color: #555;margin-top: 10px;">节点删除</div>
 </figure>
 - 🎯 快速定位并高亮节点
-*节点定位并高亮*
 <figure style="text-align: center;">
   <img src="docs/assets/find_focus_hilight.gif" alt="节点定位并高亮" style="max-width: 100%;" />
-  <figcaption style="font-size: 14px; color: #555;margin-top: 10px;">节点定位并高亮</figcaption>
+  <div style="font-size: 14px; color: #555;margin-top: 10px;">节点定位并高亮</div>
 </figure>
 - 📂 主动折叠、展开、全部展开
 <figure style="text-align: center;">
   <img src="docs/assets/expand.gif" alt="节点展开/折叠" style="max-width: 100%;" />
-  <figcaption style="font-size: 14px; color: #555;margin-top: 10px;">节点展开/折叠</figcaption>
+  <div style="font-size: 14px; color: #555;margin-top: 10px;">节点展开/折叠</div>
 </figure>
 
 ## 🚀 快速开始
