@@ -7,8 +7,12 @@
 ## ✨ Feature
 
 - 🛠️ 基于模板树进行内容节点/树的添加与删除
+![添加节点](docs/assets/add.gif)
+![删除节点](docs/assets/delete.gif)
 - 🎯 快速定位并高亮节点
+![删除节点](docs/assets/find_focus_hilight.gif)
 - 📂 主动折叠、展开、全部展开
+![折叠/展开](docs/assets/delete.gif)
 
 ## 📦 示例预览
 
