@@ -12,7 +12,7 @@
 - 🎯 快速定位并高亮节点
 ![节点定位并高亮](docs/assets/find_focus_hilight.gif "节点定位并高亮")
 - 📂 主动折叠、展开、全部展开
-![节点展开/折叠](docs/assets/delete.gif "节点展开/折叠")
+![节点展开/折叠](docs/assets/expand.gif "节点展开/折叠")
 
 ## 🚀 快速开始
 npm install
