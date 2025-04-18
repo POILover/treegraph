@@ -7,15 +7,17 @@
 ## ✨ Feature
 
 - 🛠️ 基于模板树进行内容节点/树的添加与删除
-![添加节点](docs/assets/add.gif)
-![删除节点](docs/assets/delete.gif)
+*节点添加*
+![节点添加](docs/assets/add.gif)
+*节点删除*
+![节点删除](docs/assets/delete.gif)
 - 🎯 快速定位并高亮节点
-![删除节点](docs/assets/find_focus_hilight.gif)
+*节点定位并高亮*
+![节点定位并高亮](docs/assets/find_focus_hilight.gif)
 - 📂 主动折叠、展开、全部展开
-![折叠/展开](docs/assets/delete.gif)
-
-## 📦 示例预览
-
-> ![示意图](docs/assets/sample-tree.png)
+*节点展开/折叠*
+![节点展开/折叠](docs/assets/delete.gif)
 
 ## 🚀 快速开始
+npm install
+npm run dev
